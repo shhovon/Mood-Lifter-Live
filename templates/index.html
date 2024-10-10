@@ -1,0 +1,485 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mood Lifter</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
+    <style>
+        * {
+            box-sizing: border-box;
+        }
+        body {
+            font-family: 'Poppins', sans-serif;
+            margin: 0;
+            padding: 0;
+            background: linear-gradient(120deg, #84fab0 0%, #8fd3f4 100%);
+            color: #333;
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+        .container {
+            background-color: rgba(255, 255, 255, 0.9);
+            border-radius: 20px;
+            padding: 20px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            width: 95%;
+            max-width: 600px;
+            margin: 20px auto;
+        }
+        h1 {
+            text-align: center;
+            color: #2c3e50;
+            margin-bottom: 20px;
+            font-size: 24px;
+        }
+        #weatherInfo {
+            text-align: center;
+            font-size: 16px;
+            margin-bottom: 20px;
+            background-color: rgba(255, 255, 255, 0.8);
+            border-radius: 15px;
+            padding: 15px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+
+        #weatherIcon {
+            font-size: 36px;
+            margin-bottom: 10px;
+        }
+
+        #temperature {
+            font-size: 24px;
+            font-weight: 600;
+            margin-bottom: 5px;
+        }
+
+        #weatherDescription {
+            font-style: italic;
+        }
+
+        #weatherMessage {
+            margin-top: 10px;
+            font-weight: 300;
+        }
+
+        .mood-cards {
+            display: flex;
+            justify-content: center;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin-top: 20px;
+        }
+        .mood-card {
+            padding: 15px;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: transform 0.3s;
+            text-align: center;
+            width: calc(50% - 10px);
+            margin-bottom: 10px;
+            font-size: 14px;
+        }
+        .mood-card:hover {
+            transform: translateY(-5px);
+        }
+        #message, #songMessage {
+            margin-top: 20px;
+            padding: 15px;
+            background-color: #ecf0f1;
+            border-radius: 10px;
+            text-align: center;
+            font-size: 14px;
+        }
+        #videoContainer {
+            margin-top: 20px;
+            text-align: center;
+        }
+        #currentVideo {
+            width: 100%;
+            max-width: 560px;
+            height: 315px;
+            border: none;
+        }
+        #playlist {
+            margin-top: 20px;
+            max-height: 200px;
+            overflow-y: auto;
+            border: 1px solid #ddd;
+            padding: 10px;
+            font-size: 14px;
+        }
+        .playlist-item {
+            cursor: pointer;
+            padding: 5px;
+            border-bottom: 1px solid #eee;
+        }
+        .playlist-item:hover {
+            background-color: #f0f0f0;
+        }
+        .error-message {
+            color: #721c24;
+            background-color: #f8d7da;
+            border: 1px solid #f5c6cb;
+            border-radius: 5px;
+            padding: 10px;
+            margin-top: 20px;
+            text-align: center;
+            font-size: 14px;
+        }
+        #welcomeScreen {
+            text-align: center;
+        }
+        #nameInput {
+            margin-top: 20px;
+            padding: 10px;
+            width: 80%;
+            max-width: 300px;
+            border: 2px solid #3498db;
+            border-radius: 25px;
+            font-size: 16px;
+            outline: none;
+            transition: border-color 0.3s;
+        }
+        #nameInput:focus {
+            border-color: #2980b9;
+        }
+        #greeting {
+            text-align: center;
+            font-size: 18px;
+            margin-bottom: 20px;
+            color: #2c3e50;
+        }
+
+        @media (max-width: 480px) {
+            .container {
+                padding: 15px;
+            }
+            h1 {
+                font-size: 20px;
+            }
+            .mood-card {
+                width: 100%;
+                font-size: 12px;
+            }
+            #currentVideo {
+                height: 240px;
+            }
+            #playlist {
+                max-height: 150px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div id="weatherInfo"></div>
+        <div id="welcomeScreen">
+            <h1>Welcome to Mood Lifter</h1>
+            <p>What should we call you?</p>
+            <input type="text" id="nameInput" placeholder="Enter your name" autocomplete="off">
+        </div>
+        <div id="mainContent" style="display: none;">
+            <h1>Mood Lifter</h1>
+            <div id="greeting"></div>
+            <div class="mood-cards">
+                <div class="mood-card" style="background: linear-gradient(120deg, #f6d365 0%, #fda085 100%);" onclick="selectMood('happy')">Happy</div>
+                <div class="mood-card" style="background: linear-gradient(120deg, #a1c4fd 0%, #c2e9fb 100%);" onclick="selectMood('sad')">Sad</div>
+                <div class="mood-card" style="background: linear-gradient(120deg, #d4fc79 0%, #96e6a1 100%);" onclick="selectMood('neutral')">Neutral</div>
+                <div class="mood-card" style="background: linear-gradient(120deg, #fa709a 0%, #fee140 100%);" onclick="selectMood('excited')">Excited</div>
+                <div class="mood-card" style="background: linear-gradient(120deg, #a18cd1 0%, #fbc2eb 100%);" onclick="selectMood('tired')">Tired</div>
+            </div>
+            <div id="message"></div>
+            <div id="songMessage"></div>
+            <div id="videoContainer"></div>
+        </div>
+    </div>
+
+    <script>
+        let userInfo = {};
+        let currentVideoIndex = 0;
+        let videos = [];
+    
+                // Updated getUserInfo function
+                function getUserInfo() {
+            if ("geolocation" in navigator) {
+                navigator.geolocation.getCurrentPosition(function(position) {
+                    const lat = position.coords.latitude;
+                    const lon = position.coords.longitude;
+                    
+                    console.log(`User location: ${lat.toFixed(4)}, ${lon.toFixed(4)}`);
+                    
+                    fetch(`https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lon}&current_weather=true&hourly=temperature_2m,weathercode`)
+                        .then(response => response.json())
+                        .then(data => {
+                            const currentWeather = data.current_weather;
+                            const temp = currentWeather.temperature;
+                            const weathercode = currentWeather.weathercode;
+                            const weatherDescription = getWeatherDescription(weathercode);
+                            const weatherIcon = getWeatherIcon(weathercode);
+                            displayWeatherInfo(temp, weatherDescription, weatherIcon);
+                        })
+                        .catch(error => {
+                            console.error('Error fetching weather:', error);
+                            document.getElementById('weatherInfo').textContent = 'Unable to fetch weather data';
+                        });
+                }, function(error) {
+                    console.error('Error getting location:', error);
+                    document.getElementById('weatherInfo').textContent = 'Unable to get location';
+                });
+            } else {
+                document.getElementById('weatherInfo').textContent = 'Geolocation is not supported by your browser';
+            }
+        }
+
+        // Updated displayWeatherInfo function
+        function displayWeatherInfo(temp, description, icon) {
+            const weatherInfo = document.getElementById('weatherInfo');
+            const message = getWeatherMessage(temp);
+            weatherInfo.innerHTML = `
+                <div id="weatherIcon">${icon}</div>
+                <div id="temperature">${temp.toFixed(1)}°C</div>
+                <div id="weatherDescription">${description}</div>
+                <div id="weatherMessage">${message}</div>
+            `;
+        }
+
+        // New function to get weather message based on temperature
+        function getWeatherMessage(temp) {
+            if (temp < 0) return "Brrr! It's freezing out there. Stay warm and cozy!";
+            if (temp < 10) return "It's quite chilly. Don't forget your jacket!";
+            if (temp < 20) return "The weather's cool and pleasant. Enjoy your day!";
+            if (temp < 30) return "It's a beautiful, warm day. Perfect for outdoor activities!";
+            return "Whew, it's hot! Stay hydrated and find some shade.";
+        }
+    
+        // Helper function to get weather description from code
+        function getWeatherDescription(code) {
+            const weatherCodes = {
+                0: 'Clear sky',
+                1: 'Mainly clear',
+                2: 'Partly cloudy',
+                3: 'Overcast',
+                45: 'Fog',
+                48: 'Depositing rime fog',
+                51: 'Light drizzle',
+                53: 'Moderate drizzle',
+                55: 'Dense drizzle',
+                61: 'Slight rain',
+                63: 'Moderate rain',
+                65: 'Heavy rain',
+                66: 'Light freezing rain',
+                67: 'Heavy freezing rain',
+                71: 'Slight snow fall',
+                73: 'Moderate snow fall',
+                75: 'Heavy snow fall',
+                77: 'Snow grains',
+                80: 'Slight rain showers',
+                81: 'Moderate rain showers',
+                82: 'Violent rain showers',
+                85: 'Slight snow showers',
+                86: 'Heavy snow showers',
+                95: 'Thunderstorm',
+                96: 'Thunderstorm with slight hail',
+                99: 'Thunderstorm with heavy hail'
+            };
+            return weatherCodes[code] || 'Unknown weather condition';
+        }
+
+        // Helper function to get weather icon from code
+        function getWeatherIcon(code) {
+            if (code === 0) return '☀️';
+            if (code === 1 || code === 2) return '🌤️';
+            if (code === 3) return '☁️';
+            if (code === 45 || code === 48) return '🌫️';
+            if (code >= 51 && code <= 55) return '🌧️';
+            if (code >= 61 && code <= 65) return '🌧️';
+            if (code === 66 || code === 67) return '🌨️';
+            if (code >= 71 && code <= 77) return '❄️';
+            if (code >= 80 && code <= 82) return '🌦️';
+            if (code === 85 || code === 86) return '🌨️';
+            if (code >= 95) return '⛈️';
+            return '🌡️';
+        }
+    
+        async function selectMood(mood) {
+            try {
+                const response = await fetch('/mood_message', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({ mood: mood }),
+                });
+                const data = await response.json();
+                document.getElementById('message').innerText = data.message;
+                
+                await fetchAndEmbedYoutubeVideos(mood);
+            } catch (error) {
+                console.error('Error fetching mood message:', error);
+            }
+        }
+    
+        async function fetchYoutubeVideos(mood) {
+            const url = `https://www.googleapis.com/youtube/v3/search?part=snippet&maxResults=50&q=${mood}%20music%20-shorts&type=video&videoCategoryId=10&key=${API_KEY}`;
+            
+            try {
+                const response = await fetch(url);
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+                const data = await response.json();
+                return data.items
+                    .filter(item => item.snippet.liveBroadcastContent === 'none' && !item.snippet.title.toLowerCase().includes('short'))
+                    .map(item => ({
+                        id: item.id.videoId,
+                        title: item.snippet.title
+                    }))
+                    .slice(0, 30);
+            } catch (error) {
+                console.error('Error fetching videos:', error);
+                throw error;
+            }
+        }
+    
+        async function fetchAndEmbedYoutubeVideos(mood) {
+            const videoContainer = document.getElementById('videoContainer');
+            const songMessage = document.getElementById('songMessage');
+
+            try {
+                videos = await fetchYoutubeVideos(mood);
+                currentVideoIndex = 0;
+                
+                let message;
+                switch(mood) {
+                    case 'happy':
+                        message = "Here's a playlist to keep your spirits high!";
+                        break;
+                    case 'sad':
+                        message = "Here's a playlist to comfort and uplift you!";
+                        break;
+                    case 'neutral':
+                        message = "Here's a playlist to add some color to your day!";
+                        break;
+                    case 'excited':
+                        message = "Here's a playlist to match your energy!";
+                        break;
+                    case 'tired':
+                        message = "Here's a playlist to help you relax and recharge!";
+                        break;
+                }
+
+                songMessage.innerText = message;
+
+                if (videos.length > 0) {
+                    let playlistHtml = '<div id="playlist">';
+                    videos.forEach((video, index) => {
+                        playlistHtml += `<div class="playlist-item" onclick="changeVideo(${index})">${index + 1}. ${video.title}</div>`;
+                    });
+                    playlistHtml += '</div>';
+
+                    videoContainer.innerHTML = `
+                        <iframe id="currentVideo" src="https://www.youtube.com/embed/${videos[0].id}?enablejsapi=1" frameborder="0" allow="autoplay; encrypted-media" allowfullscreen></iframe>
+                        ${playlistHtml}
+                    `;
+
+                    initYouTubePlayer();
+                } else {
+                    throw new Error('No videos found for this mood.');
+                }
+            } catch (error) {
+                console.error('Error embedding YouTube videos:', error);
+                videoContainer.innerHTML = `
+                    <div class="error-message">
+                        <p>Oops! We couldn't load videos right now.</p>
+                        <p>This might be due to an ad-blocker or network issue.</p>
+                        <p>Try disabling your ad-blocker or checking your internet connection.</p>
+                    </div>
+                `;
+            }
+        }
+
+        let player;
+        function initYouTubePlayer() {
+            if (typeof YT === 'undefined' || typeof YT.Player === 'undefined') {
+                window.onYouTubeIframeAPIReady = loadPlayer;
+                const tag = document.createElement('script');
+                tag.src = 'https://www.youtube.com/iframe_api';
+                const firstScriptTag = document.getElementsByTagName('script')[0];
+                firstScriptTag.parentNode.insertBefore(tag, firstScriptTag);
+            } else {
+                loadPlayer();
+            }
+        }
+
+        function loadPlayer() {
+            player = new YT.Player('currentVideo', {
+                events: {
+                    'onStateChange': onPlayerStateChange
+                }
+            });
+        }
+
+        function onPlayerStateChange(event) {
+            if (event.data == YT.PlayerState.ENDED) {
+                playNextVideo();
+            }
+        }
+
+        function changeVideo(index) {
+            currentVideoIndex = index;
+            if (player && player.loadVideoById) {
+                player.loadVideoById(videos[currentVideoIndex].id);
+            } else {
+                const iframe = document.getElementById('currentVideo');
+                iframe.src = `https://www.youtube.com/embed/${videos[currentVideoIndex].id}?enablejsapi=1`;
+            }
+        }
+
+        function playNextVideo() {
+            currentVideoIndex = (currentVideoIndex + 1) % videos.length;
+            changeVideo(currentVideoIndex);
+        }
+
+        function showMainContent(name) {
+            document.getElementById('welcomeScreen').style.display = 'none';
+            document.getElementById('mainContent').style.display = 'block';
+            displayGreeting(name);
+        }
+    
+        function displayGreeting(name) {
+            const greetings = [
+                `Hi ${name}, it's great to see you!`,
+                `Welcome back, ${name}! Ready to lift your mood?`,
+                `Hello ${name}, let's make today amazing!`,
+                `${name}, your presence brightens our day!`,
+                `Wonderful to have you here, ${name}!`
+            ];
+            const greeting = greetings[Math.floor(Math.random() * greetings.length)];
+            document.getElementById('greeting').textContent = greeting;
+        }
+    
+        window.onload = function() {
+            getUserInfo();
+            const userName = localStorage.getItem('userName');
+            if (userName) {
+                showMainContent(userName);
+            } else {
+                document.getElementById('nameInput').focus();
+            }
+        };
+    
+        document.getElementById('nameInput').addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') {
+                const name = this.value.trim();
+                if (name) {
+                    localStorage.setItem('userName', name);
+                    showMainContent(name);
+                }
+            }
+        });
+    </script>
+</body>
+</html>
